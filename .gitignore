@@ -1,0 +1,48 @@
+# build outputs
+x64/
+Debug/
+Release/
+*.obj
+*.o
+*.pdb
+*.ipdb
+*.iobj
+*.ilk
+*.exp
+*.lib
+*.tlog
+*.log
+*.recipe
+*.suo
+*.user
+.vs/
+
+# driver artifacts
+*.sys
+*.inf.bak
+*.cat
+
+# built wasm
+sample_guest/*.wasm
+feature_guests/*.wasm
+
+# CLI
+cli/*.exe
+!goodmans.exe.manifest
+
+# generated certs (users make their own via deploy/gen_cert.cmd)
+*.cer
+*.pfx
+
+# staged deploy binaries (users copy after build)
+deploy/*.sys
+deploy/*.exe
+deploy/*.wasm
+
+# VS
+*.sdf
+*.opendb
+*.VC.db
+
+# misc
+*.zip

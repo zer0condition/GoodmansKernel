@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6D9E2A50-1F1A-4B4E-8D9F-1B0C0D0A0007}</ProjectGuid>
+    <RootNamespace>feature_guests</RootNamespace>
+    <Keyword>MakeFileProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <PropertyGroup>
+    <NMakeBuildCommandLine>call "$(MSBuildProjectDirectory)\build_all.cmd"</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>call "$(MSBuildProjectDirectory)\build_all.cmd"</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>del /Q "$(MSBuildProjectDirectory)\*.wasm" 2&gt;nul</NMakeCleanCommandLine>
+    <NMakeOutput>toolkit.wasm;process_tracer.wasm</NMakeOutput>
+    <NMakeIncludeSearchPath>..\guest_sdk;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ClCompile Include="toolkit.c" />
+    <ClCompile Include="process_tracer.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\guest_sdk\gvm.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
+  <Target Name="StageToDeploy" AfterTargets="Build">
+    <PropertyGroup>
+      <DeployDir>$(SolutionDir)deploy</DeployDir>
+    </PropertyGroup>
+    <Message Text="[deploy] staging feature guests -&gt; $(DeployDir)\features" Importance="high" />
+    <MakeDir Directories="$(DeployDir)\features" />
+    <MakeDir Directories="$(DeployDir)\gui" />
+    <ItemGroup>
+      <FeatureWasm Include="$(MSBuildProjectDirectory)\toolkit.wasm;$(MSBuildProjectDirectory)\process_tracer.wasm" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FeatureWasm)" DestinationFolder="$(DeployDir)\features" SkipUnchangedFiles="true" ContinueOnError="true" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\toolkit.wasm" DestinationFolder="$(DeployDir)\gui" SkipUnchangedFiles="true" ContinueOnError="true" />
+  </Target>
+</Project>

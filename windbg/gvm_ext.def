@@ -1,0 +1,8 @@
+LIBRARY gvm_ext
+EXPORTS
+    DebugExtensionInitialize
+    DebugExtensionUninitialize
+    modules
+    info
+    mem
+    help

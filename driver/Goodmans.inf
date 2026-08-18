@@ -1,0 +1,48 @@
+; Goodmans.inf - minimal WDM install
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider    = %Provider%
+DriverVer   =
+CatalogFile = Goodmans.cat
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[SourceDisksFiles]
+Goodmans.sys = 1
+
+[Manufacturer]
+%Provider% = Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%DeviceDesc% = Goodmans_Install,Root\Goodmans
+
+[Goodmans_Install.NT]
+CopyFiles = Goodmans.CopyFiles
+
+[Goodmans_Install.NT.Services]
+AddService = Goodmans,%SPSVCINST_ASSOCSERVICE%,Goodmans_Service
+
+[Goodmans.CopyFiles]
+Goodmans.sys
+
+[Goodmans_Service]
+DisplayName    = %ServiceDesc%
+ServiceType    = 1
+StartType      = 3
+ErrorControl   = 1
+ServiceBinary  = %12%\Goodmans.sys
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+Provider    = "Goodmans"
+DeviceDesc  = "Goodmans WASM Kernel VM"
+ServiceDesc = "Goodmans"
+DiskName    = "Goodmans Install Disk"

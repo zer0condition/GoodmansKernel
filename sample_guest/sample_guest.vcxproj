@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6D9E2A50-1F1A-4B4E-8D9F-1B0C0D0A0003}</ProjectGuid>
+    <RootNamespace>sample_guest</RootNamespace>
+    <Keyword>MakeFileProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <PropertyGroup>
+    <NMakeBuildCommandLine>call "$(MSBuildProjectDirectory)\build_all.cmd"</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>call "$(MSBuildProjectDirectory)\build_all.cmd"</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>del /Q "$(MSBuildProjectDirectory)\*.wasm" 2&gt;nul</NMakeCleanCommandLine>
+    <NMakeOutput>sample_guest.wasm;ffi_demo.wasm;pslist_dumper.wasm;handle_stripper.wasm;infinity_hook.wasm</NMakeOutput>
+    <NMakeIncludeSearchPath>..\guest_sdk;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ClCompile Include="sample_guest.c" />
+    <ClCompile Include="ffi_demo.c" />
+    <ClCompile Include="pslist_dumper.c" />
+    <ClCompile Include="handle_stripper.c" />
+    <ClCompile Include="infinity_hook.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\guest_sdk\gvm.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
+  <Target Name="StageToDeploy" AfterTargets="Build">
+    <PropertyGroup>
+      <DeployDir>$(SolutionDir)deploy</DeployDir>
+    </PropertyGroup>
+    <Message Text="[deploy] staging demo wasm -&gt; $(DeployDir)\samples" Importance="high" />
+    <MakeDir Directories="$(DeployDir)\samples" />
+    <ItemGroup>
+      <SampleWasm Include="$(MSBuildProjectDirectory)\sample_guest.wasm;$(MSBuildProjectDirectory)\ffi_demo.wasm;$(MSBuildProjectDirectory)\pslist_dumper.wasm;$(MSBuildProjectDirectory)\handle_stripper.wasm;$(MSBuildProjectDirectory)\infinity_hook.wasm" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SampleWasm)" DestinationFolder="$(DeployDir)\samples" SkipUnchangedFiles="true" ContinueOnError="true" />
+  </Target>
+</Project>

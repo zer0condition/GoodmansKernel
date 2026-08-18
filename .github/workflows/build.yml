@@ -1,0 +1,48 @@
+name: build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  driver:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install WDK
+        run: |
+          choco install --no-progress windowsdriverkit10
+        shell: pwsh
+
+      - name: install LLVM (for wasm32)
+        run: |
+          choco install --no-progress llvm --version=18.1.8
+        shell: pwsh
+
+      - name: locate MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: build driver + cli + guest (Debug)
+        run: |
+          $env:LLVM_HOME = "C:\Program Files\LLVM"
+          msbuild Goodmans.sln /p:Configuration=Debug /p:Platform=x64 /m /nologo
+        shell: pwsh
+
+      - name: build driver + cli + guest (Release)
+        run: |
+          $env:LLVM_HOME = "C:\Program Files\LLVM"
+          msbuild Goodmans.sln /p:Configuration=Release /p:Platform=x64 /m /nologo
+        shell: pwsh
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodmans-x64-release
+          path: |
+            driver/x64/Release/Goodmans.sys
+            cli/x64/Release/goodmans.exe
+            sample_guest/sample_guest.wasm
+          if-no-files-found: warn
