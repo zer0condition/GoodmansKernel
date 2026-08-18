@@ -1,5 +1,7 @@
 # Goodmans
 
+![Demo](demo.gif)
+
 Signed WDM driver embedding wasm3. Loads unsigned `.wasm` modules, gives
 them nt/hal FFI. Write kernel logic in C/Rust, compile to `wasm32`, load,
 iterate. HVCI-compliant.
