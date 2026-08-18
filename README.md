@@ -1,4 +1,4 @@
-# Goodmans
+# The Goodmans Kernel
 
 ![Demo](demo.gif)
 
